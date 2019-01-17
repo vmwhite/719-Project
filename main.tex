@@ -1,0 +1,552 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LaTeX Template: Project Titlepage Modified (v 0.1) by rcx
+%
+% Original Source: http://www.howtotex.com
+% Date: February 2014
+% 
+% This is a title page template which be used for articles & reports.
+% 
+% This is the modified version of the original Latex template from
+% aforementioned website.
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt]{report}
+\usepackage[a4paper]{geometry}
+\usepackage[myheadings]{fullpage}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{graphicx, wrapfig, subcaption, setspace, booktabs}
+\usepackage[T1]{fontenc}
+\usepackage[font=small, labelfont=bf]{caption}
+\usepackage{fourier}
+\usepackage[protrusion=true, expansion=true]{microtype}
+\usepackage[english]{babel}
+\usepackage{sectsty}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{amsmath}
+\usepackage{url, lipsum}
+% do not move tables
+\usepackage{float}
+\restylefloat{table}
+
+% ------------------------------
+% Bibilography
+
+\usepackage[style=authoryear,backend=biber,natbib]{biblatex}
+% \bibliographystyle{unsrtnat}
+
+\bibliography{bibliography.bib}
+% ------------------------------
+
+\newcommand{\HRule}[1]{\rule{\linewidth}{#1}}
+\onehalfspacing
+\setcounter{tocdepth}{5}
+\setcounter{secnumdepth}{5}
+
+%-------------------------------------------------------------------------------
+% HEADER & FOOTER
+%-------------------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhead[C]{Stochastic Maximum Coverage Model in EMS}
+\setlength\headheight{15pt}
+\fancyhead[L]{ISYE 719}
+\fancyhead[R]{Gloncak \& White}
+\fancyfoot[L]{}
+\fancyfoot[C]{}
+\fancyfoot[R]{Page \thepage\ of \pageref{LastPage}}
+%-------------------------------------------------------------------------------
+% TITLE PAGE
+%-------------------------------------------------------------------------------
+
+\begin{document}
+
+\title{ \normalsize \textsc{IS Y E 719 Course Project}
+		\\ [2.0cm]
+		\HRule{0.5pt} \\
+		\LARGE \textbf{\uppercase{Stochastic Maximum Coverage Model in EMS}}
+		\HRule{2pt} \\ [0.5cm]
+		\normalsize \today \vspace*{5\baselineskip}}
+
+\date{}
+
+\author{
+		Veronica White\\ 
+	    Vladan Gloncak \\
+		}
+
+\maketitle
+\tableofcontents
+\newpage
+
+%-------------------------------------------------------------------------------
+% Section title formatting
+\sectionfont{\scshape}
+%-------------------------------------------------------------------------------
+
+%-------------------------------------------------------------------------------
+% Describe the problem (in words)
+%-------------------------------------------------------------------------------
+\section*{Problem Description}
+\addcontentsline{toc}{section}{Problem Description}
+\textbf{EMS Background}
+\addcontentsline{toc}{subsection}{EMS Background}
+
+Emergency medical services (EMS) provide out-of-hospital acute medical care and transportation to the appropriate health care facility. These EMS systems need to satisfy the demand of medical assistance calls throughout a region in a timely fashion. EMS systems serve these calls by deploying ambulances. EMS planners must make both strategic decisions such as locating ambulance to a base station and operation decisions such as assigning ambulances to calls, and possibly relocating an ambulance after serving a call.  
+
+At the operational level, dispatching assignment decisions for a call not only consider geographical location of the call, but also the severity of the emergency class. High priority calls (or life-threatening call), such as heart attacks, need a faster response and requires higher level of care. On the other hand, low priority calls (or non-life-threatening call),such as minor injury without lacerations, can be addressed with only a basic level of care. 
+
+The most common types of emergency response vehicles are: Advances Life Support (ALS), Basic Life Support (BLS), and Quick Response Vehicle (QRV). ALS ambulances are typically dispatched to high priority calls as they typically have paramedics on board or someone who can complete advanced medical procedures. BLS ambulances are typically dispatched to low priority calls since they only have EMS volunteers, who can provide basic support. Depending on the EMS system QRVs may or may not have paramedics on board. QRVs are typically are used to decrease the average first-response time in the EMS system as they are some sort of car rather than an ambulance, which allows them to be on the scene quicker, and do not transport the patient to the hospital, allowing them to return to the home station sooner.
+
+Emergency vehicles are typically evaluated by performance metrics such as service time, transportation time, and response time for a given call. \citet{Bandara} showed that the most important factor for increasing patient survival rate is decreasing first-responder response time (or reducing the amount of time between when the call is made and the first-responder arrives on the scene). This makes sense much medical literature that suggests the sooner medical attention is received for life-threatening conditions, such as heart attacks, the better observed patient survival outcomes. 
+
+Maximum coverage models (MCM) in EMS literature are specifically aimed at decreasing this response time for each call. The model determines a call as "covered" if an ambulance arrives within a desired time threshold. This threshold, in practice and the MCM literature, is typically between 8-10 minutes. 
+
+MCM problems are computationally demanding, but solvable.
+\citet{naoum} explored the re-deployment problem of relocating the available ambulances to reestablish maximum coverage. 
+The result show that the optimal strategies can be computed within 40 seconds under reasonable simplifications.
+A lot of research in the EMS planning is focused on designing dispatching policies.
+One of the most important factor involved is the character of the emergency, i.e. its priority.
+\citet{soovin} used a mixed integer linear programming model  with a hypercube  model  to  identify  deployment and dispatch decisions, and presented a method for selecting an appropriate cutoff value for reserving capacity for high priority calls if the EMS system is congested.
+In this project we focus solely on the positioning and dispatching problem, similar to \citet{Bouj}
+\\
+
+\noindent{}\textbf{Our Project}
+\addcontentsline{toc}{subsection}{Our Project}
+
+For our project we will model this ambulance deployment problem as a two stage stochastic MCM where the first-stage problem consists of the  strategic level decisions concerned with locating where to base each ambulance, and the second-stage problem consists of the operational level decisions concerned with the state and dispatching decisions made during a time period. This approach allows for decisions made at the strategic level to be determined prior to dispatching decisions. In practice these strategic decisions that reorganize the EMS system can be expensive and time consuming, unlike the decisions at the operational level, that can be changed quickly and inexpensively.
+
+Operational level decisions include dispatching decisions as well as possible ambulance relocation decisions, where ambulances return to a different station from which they were dispatched from. In our model we will not focus on ambulance relocation since it is often burdensome on the the EMS workers and may not work well with a mix of volunteer and city stations in the EMS system \citep{belanger2018recent}.
+
+We will model two types of ambulances --- BLS (basic life support) and QRV (quick response vehicle). Since these are the only two types of vehicles in the EMS we will assume all QRVs have a paramedics allowing them to handle high priority calls. We will also assume that BLS vehicles will handle all any necessary patient transport to the hospital, as the QRVs are not equipped to do so. Therefore our optimal dispatching policy will be to send both a QRV and BLS for a high priority call and only send a BLS for a low priority call. This way QRV vehicles will address the medical attention needed by high-prioity calls, while the BLS will be on the scene to transport any patient to the hospital if needed.
+
+The stochastic or randomness of our model is the time and location of call arrivals over a specified time frame. Other random factors exists such as service time and transportation time since these times depend on the specifics of the emergency and traffic or weather. Since we are most interested in the maximum coverage of the system (or minimizing the average response time) we will focus solely on the randomness of the calls, while assigning a preset service/transportation time for a vehicle once it is dispatched. We note that optimizing over a given time frame makes our model omniscient, since it knows all of the calls within that time frame ahead of time. Within the literature of stochastic MCMs the only modification of this is creating a multi-stage problem with slightly shorter omniscient time frames. There are also dynamic programming methods that address this issue. However, our stochastic problem is still useful since it gives us an optimistic bound on our EMS.
+%-------------------------------------------------------------------------------
+% Model - Describe your mathematical formulation(s) of the problem
+%-------------------------------------------------------------------------------
+\section*{ Model:}
+\addcontentsline{toc}{section}{Model}
+\addcontentsline{toc}{subsection}{Hanover County Instance Description}
+\noindent\textbf{Hanover County Instance Description}\\
+\indent To analyze this problem we used a data set from the EMS of Hanover County in Virginia USA. The data set was collected over a five year period and consisted of over 20,000 calls. Hanover's EMS is fairly small having only 16 possible ambulance locations, at most 8 vehicles on duty at any one time, and a service population of 105,923 which was divided into 233 possible call districts. This led to fairly small call rates per district per hour. We also determined our instance would decide where to place 5 BLS vehicles and 3 QRV vehicles among the 16 potential station location. 
+
+We determined the time frame for a scenario to be 6 hours and used the call rates between the hours of 12pm and 6pm during a weekday. This 6 hour time frame appeared to be the peak window of EMS operation in Hanover County. We also used the Hanover data to reasonably simplify transportation and service times of a dispatched vehicles. These times are representative of the time a dispatched vehicle would be unavailable for a later call. We found the average the service time of BLS is 60 minutes and the service time of QRV is 30 minutes during this peak time frame. Note the QRV time is shorter since they only service the calls and do not transport the patient to the hospital. These time frames and transportation/service times is also consistent with some similar EMS system data used in\citet{naoum} and  \citet{abou}.
+
+\pagebreak{}
+\addcontentsline{toc}{subsection}{Parameters and Variables}
+\noindent\textbf{Parameters and Variables}\\
+\indent\textbf{Table \ref{tbl:Sets}} summarizes the Sets used
+throughout the report, while \textbf{Table \ref{tbl:Parameters}} summarizes the parameter symbols used throughout the report. In addition \textbf{Table \ref{tbl:Variables}} summarizes our first and second stage variables. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\TABLEs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[h]
+\centering
+\caption{Summary of Sets\label{tbl:Sets}}
+{\begin{tabular}{c p{4in} c} \hline
+Symbol & \multicolumn{1}{c}{Description} & Domain \\
+\hline
+$I$ & set of station locations \\
+$S$ & set of scenarios \\
+$C^s$ & set of calls in scenario $s$ & $s \in S$ \\
+$C^s_H\subseteq C^s$ & set of high priority calls in scenario $s$ & $s \in S$ \\
+$C^s_L \subseteq C^s$ & set of low priority calls in scenario $s$ & $s \in S$ \\
+$I^s_c$ & set of stations that are close enough to cover a call $c$ in scenario $s$ &  $c\in C^s$ $s \in S$ \\
+$P^{QRV}_{s}(P^{BLS}_{s})$ & set of call pairs a single QRV (BLS) vehicle cannot service in a scenario $s$ due to call overlap & $s \in S$ 
+\\
+\hline
+\end{tabular}}
+\end{table}
+\begin{table}[h]
+\centering
+\caption{Summary of Parameters\label{tbl:Parameters}}
+{\begin{tabular}{c p{4in} c} \hline
+Symbol & \multicolumn{1}{c}{Description} & Domain \\
+\hline
+ $a^{QRV} (a^{BLS})$ & maximum number of QRV (BLS) vehicles available to the EMS system \\
+ $b_i$ & the capacity of station $i$ & $i \in I$\\
+$\rho_s$ & probability of scenario $s$ occurring & $s \in S$\\
+ $\lambda^L (\lambda^H)$ & the benefit of dispatching an ambulance to a low (high) priority call\\
+ $\lambda^H_{QRV}$ & the benefit of dispatching a QRV ambulance to a high priority call\\
+ $\gamma^L (\gamma^H)$ & the benefit of covering a low (high) priority call\\
+\hline
+\end{tabular}}
+\end{table}
+%
+\begin{table}[H]
+\centering
+\caption{Summary of Variables\label{tbl:Variables}}
+{\begin{tabular}{c c p{4in} c} \hline
+Stage & Symbol & \multicolumn{1}{c}{Description} & Domain \\
+\hline
+ 1{st} & $X^{QRV}_{i} (X^{BLS}_{i})$ &   1 if a QRV  (BLS) vehicle is placed at station, $i$, 0 o.w. & $i \in I$ \\
+ 2{nd} & $Y^{QRV}_{ic} (Y^{BLS}_{ic})$ & 1 if QRV (BLS) vehicle placed at station, $i$, is sent to call, $c$ & $ i \in I$ $c \in C$\\
+ 2{nd} & $Z^{H}_{c}(Z^{L}_{c})$ & 1 if a high(low) priority call, $c$, is covered, 0 o.w. & $c \in C$\\
+ 2{nd} & $W^{QRV}_{c}$ & 1 if a QRV ambulance is dispatched to a high priority call, $c$ & $c \in C_H$ \\
+\hline
+\end{tabular}}
+\end{table}
+
+
+\pagebreak{}
+\addcontentsline{toc}{subsection}{Stochastic Program}
+\noindent\textbf{Stochastic Program:}
+\begin{equation}
+    \label{ObjectiveSP}
+     \max \quad \mathbb{E}\left[ Q_s(x) \right]
+\end{equation}
+\\First Stage Constraints:
+ % Assign all ambulances
+    \begin{equation}
+        \label{assign to stations}
+        X^{QRV}_{i} + X^{BLS}_{i} \leq b_{i} \quad \forall i \in I
+    \end{equation}
+     \begin{equation}
+        \label{assign all QRVs}
+        \sum_{ i \in I} X^{QRV}_{i} \leq a^{QRV} 
+    \end{equation}
+     \begin{equation}
+        \label{assign all BLSs}
+        \sum_{ i \in I} X^{BLS}_{i} \leq a^{BLS} 
+    \end{equation}
+%negativity of first stage
+    \begin{equation}
+        \label{nonngegfirst}
+        X^{BLS}_{i}, X^{QRV}_i \in \{0,1\} \quad \forall i \in I
+    \end{equation}
+\\Second Stage Constraints:
+%objective of second stage
+    \begin{equation}
+        \label{SPfunc}
+       Q_s(x) = \sum_{c \in C^s}\gamma^HZ^H_{c} + \gamma^LZ^L_{c} 
+        + \sum_{c \in C^s_L}\lambda^L\sum_{i \in I} Y^{BLS}_{ic}
+        + \sum_{c \in C^s_H}
+       \left(
+        \lambda^H\sum_{i \in I} Y^{BLS}_{ic} + 
+        \lambda^H_{QRV}W^{QRV}_{c}
+       \right)
+    \end{equation}
+%Can only assign if ambulance there (also busy goes here)
+    \begin{equation}
+        \label{BLSloc}
+        Y^{BLS}_{ic} \leq X^{BLS}_{i}  \quad  \forall i \in I, \forall c \in C^s
+    \end{equation}
+    \begin{equation}
+        \label{QRVloc}
+        Y^{QRV}_{ic} \leq X^{QRV}_{i}  \quad \forall i \in I, \forall c \in C^s
+    \end{equation}
+%Send at most 1 of each type to a call
+    \begin{equation}
+        \label{Wpenalty}
+        \sum_{i \in I} Y^{QRV}_{ic} \leq 1 \quad \forall c \in C^s_H
+    \end{equation}
+    \begin{equation}
+        \label{Wpenalty}
+    \sum_{i \in I} Y^{BLS}_{ic} \leq 1  \quad \forall c \in C^s 
+    \end{equation}
+% who to send for high priority
+    \begin{equation}
+        \label{Wpenalty}
+          2W^{QRV}_{c} - \sum_{i \in I} Y^{QRV}_{ic} - \sum_{i \in I}Y^{BLS}_{ic}  \leq 0  \quad \forall c \in C^s_H
+    \end{equation}
+%Is the call covered?
+    \begin{equation}
+        \label{covHigh}
+        Z^H_{c} - \sum_{i\in I^s_c}Y^{QRV}_{ic} + Y^{BLS}_{ic}  \leq 0 \quad  \forall c \in C^s_H
+    \end{equation}
+    \begin{equation}
+        \label{covLOW}
+        Z^L_{c} - \sum_{i\in I^s_c} Y^{BLS}_{ic}  \leq 0 \quad  \forall c \in C^s_L
+    \end{equation}
+    \begin{equation}
+        \label{covLOW}
+        Y^{BLS}_{ic} + Y^{BLS}_{ic'} \leq 1 \quad  \forall i \in I, \forall c' \in C^{BLS}_{ics}
+    \end{equation}
+    \begin{equation}
+        \label{covLOW}
+        Y^{QRV}_{ic} + Y^{QRV}_{ic'} \leq 1 \quad  \forall i \in I, \forall c' \in C^{QRV}_{ics} 
+    \end{equation}
+%binary constraints
+    \begin{equation}
+        \label{covLOW}
+        Y^{QRV}_{ic}, Y^{BLS}_{ic} \in \{0,1\}
+    \end{equation}
+    \begin{equation}
+        \label{covLOW}
+        W^{QRV}_{c}, W_{c}, Z^{H}_{c}, Z^{L}_{c},\in \{0,1\} \quad \forall c \in C^s
+    \end{equation}
+We can re-write this stochastic program as an extensive form integer Program, which we can implement using Gurobi.
+    
+\noindent\textbf{Extensive Form Integer Program:}
+\addcontentsline{toc}{subsection}{Extensive Form Integer Program}
+%\\%model
+\begin{equation}
+    \label{Objective}
+     \max \quad \sum_{s=1}^S \rho_s
+     \left[
+        \sum_{c \in C^s}\gamma^HZ^H_{cs} + \gamma^LZ^L_{cs} 
+        + \sum_{c \in C^s_L}\lambda^L\sum_{i \in I} Y^{BLS}_{ics}
+        + \sum_{c \in C^s_H}
+       \left(
+        \lambda^H\sum_{i \in I} Y^{BLS}_{ics} + 
+        \lambda^H_{QRV}W^{QRV}_{cs}
+       \right)
+    \right]
+\end{equation}
+Subject to:
+ % Assign all ambulances
+    \begin{equation}
+        \label{Eassign to stations}
+        X^{QRV}_{i} + X^{BLS}_{i} \leq b_{i} \quad \forall i \in I
+    \end{equation}
+     \begin{equation}
+        \label{Eassign all QRVs}
+        \sum_{ i \in I} X^{QRV}_{i} \leq a^{QRV} 
+    \end{equation}
+     \begin{equation}
+        \label{Eassign all BLSs}
+        \sum_{ i \in I} X^{BLS}_{i} \leq a^{BLS} 
+    \end{equation}
+%Can only assign if ambulance there (also busy goes here)
+    \begin{equation}
+        \label{EBLSloc}
+        Y^{BLS}_{ics} \leq X^{BLS}_{i}  \quad  \forall i \in I, \forall c \in C^s, \forall s \in S  
+    \end{equation}
+    \begin{equation}
+        \label{EQRVloc}
+        Y^{QRV}_{ics} \leq X^{QRV}_{i}  \quad \forall i \in I, \forall c \in C^s, \forall s \in S  
+    \end{equation}
+%Send at most 1 of each type to a call
+    \begin{equation}
+        \label{Eatmost1QRV}
+        \sum_{i \in I} Y^{QRV}_{ics} \leq 1 \quad \forall c \in C^s_H , \forall s \in S  
+    \end{equation}
+    \begin{equation}
+        \label{Eatmost1BLS}
+    \sum_{i \in I} Y^{BLS}_{ics} \leq 1  \quad \forall c \in C^s, \forall s \in S  
+    \end{equation}
+% who to send for high priority
+    \begin{equation}
+        \label{EWcs}
+         2W^{QRV}_{cs} - \sum_{i \in I} Y^{QRV}_{ics} - \sum_{i \in I}Y^{BLS}_{ics} \leq 0  \quad \forall c \in C^s_H, \forall s \in S  
+    \end{equation}
+%Is the call covered?
+    \begin{equation}
+        \label{EcovHigh}
+        Z^H_{cs} - \sum_{i\in I^s_c}Y^{QRV}_{ics} + Y^{BLS}_{ics} \leq 0 \quad  \forall c \in C^s_H, \forall s \in S  
+    \end{equation}
+    \begin{equation}
+        \label{EcovLOW}
+        Z^L_{cs} - \sum_{i\in I^s_c} Y^{BLS}_{ics} \leq 0   \quad \forall c \in C^s_L, \forall s \in S 
+    \end{equation}
+    \begin{equation}
+        \label{conflictBLS}
+        Y^{BLS}_{ics} + Y^{BLS}_{ic's} \leq 1 \quad  \forall i \in I, \forall (c,c') \in P^{BLS}_{s}, \forall s \in S 
+    \end{equation}
+    \begin{equation}
+        \label{conflictQRV}
+        Y^{QRV}_{ics} + Y^{QRV}_{ic's} \leq 1 \quad  \forall i \in I, \forall (c,c') \in P^{QRV}_{s}, \forall s \in S 
+    \end{equation}
+%negativity of first stage
+    \begin{equation}
+        \label{Eint0}
+        X^{BLS}_{i}, X^{QRV}_i \in \{0,1\} \quad \forall i \in I
+    \end{equation}
+%binary constraints
+    \begin{equation}
+        \label{Eint1}
+        Y^{QRV}_{ics}, Y^{BLS}_{ics} \in \{0,1\} \quad \forall i \in I, \forall c \in C^s, \forall s \in S
+    \end{equation}
+    \begin{equation}
+        \label{Eint2}
+        W^{QRV}_{cs}, W_{cs}, Z^H_{cs} , Z^L_{cs} \in \{0,1\} \quad \forall c \in C^s, \forall s \in S
+    \end{equation}
+(\ref{ObjectiveSP}) and (\ref{SPfunc})  in our stochastic program and (\ref{Objective})  in our extensive form program represents the objective function. In our model we want to Maximize the coverage of the EMS system, which is represented by our coverage variables, $Z^H_{cs}$ and $Z^L_{cs}$. However, we cannot guarantee we can obtain a feasible solution in which every call is covered. Therefore, we allowed for our model to not cover a call and with similar logic also not send the requested types of vehicles. We gave the benefit to covering and serving a call, marginal benefit for at least serving a call, and gave no benefit for not serving (or "losing") a call. Below summarizes the possible outcomes of a single call:
+\begin{itemize}
+    \item For a high priority call:
+        \begin{itemize}
+            \item Covered and sent QRV and BLS vehicles, Total Benefit = $100$ = $\gamma_H + \lambda_H + \lambda_H^{qrv}$
+            \item Covered and only sent a BLS vehicle, Total Benefit =$75 = \gamma_H + \lambda_H$
+            \item Not Covered, but sent QRV and BLS vehicles, Total Benefit = $50$ = $\lambda_H + \lambda_H^{qrv}$
+            \item Not Covered and only sent a BLS vehicle, Total Benefit = $25$ = $\lambda_H$
+            \item Not Covered and no vehicle sent, Total Benefit = 0
+        \end{itemize}
+    \item For a Low priority call:
+        \begin{itemize}
+            \item Covered and sent a BLS vehicle, Total Benefit = $75 = \gamma_L + \lambda_L$
+            \item Not Covered, but sent a BLS vehicle, Total Benefit = $50$ = $\lambda_L$
+            \item Not Covered and No vehicle sent, Total Benefit = 0
+        \end{itemize}
+\end{itemize}
+Solving these equations gave us the following parameters to use in our model:
+\begin{align*}
+   \gamma_H &= 50 \\
+    \gamma_L &= 25 \\
+    \lambda_H &= 25\\
+    \lambda_L &= 50\\
+    \lambda_H^{QRV} &= 25 
+\end{align*}
+
+In the extensive for the first stage constraints (\ref{Eassign all QRVs}) and (\ref{Eassign all BLSs}) ensure that the number of (each type of) ambulances allocated to the stations does not exceed the number of ambulances available.
+
+Constraints (\ref{EBLSloc}) and (\ref{EQRVloc}) ensure that both types of ambulances are sent from a station only if they were allocated to the station (in the first stage).
+
+Constraints (\ref{Eatmost1QRV}) and (\ref{Eatmost1BLS}) ensure that at most one ambulance of appropriate type is sent to a call. This is one of the assumptions of our model, based on the available data.
+
+Constraint (\ref{EWcs}) ensures that $W_{cs}^{QRV}$ will be set to 1 if both vehicles are sent to a high priority call.
+Constraints (\ref{EcovHigh}) and (\ref{EcovLOW}) ensure that the $Z$ variables will be set to one if the call was covered with at least some ambulances.
+
+The bottleneck of the problem are the conflicting calls that cannot be served at the same time by the same ambulance. 
+We identify such conflicts while generating the scenarios and constraints (\ref{conflictBLS}) and (\ref{conflictQRV}) ensure that ambulances are not sent to conflicting calls.
+
+All the second stage variables are binary, which follows from the character of the problem (we have to decide from which station we want to send the ambulance and the set of stations is obviously discrete etc.).
+This is established in the constraints (\ref{Eint0}), (\ref{Eint1}) and (\ref{Eint2}).
+
+
+%-------------------------------------------------------------------------------
+% Methods - Describe the method(s) you implemented
+%-------------------------------------------------------------------------------
+\newpage
+\section*{Solving Methods}
+\addcontentsline{toc}{section}{Solving Methods}
+
+We implemented the previously described model using Python 3.6 and Gurobi 8.0.1.
+The solving the original integer program becomes computationally expensive with increasing number of scenarios as well as increasing load on the EMS system.
+
+To simulate increased load of the EMS system, we used a multiplicative coefficient to scale the rate of the incoming calls for each district in the data.
+We decided to call the coefficient ``levels'', e.g. if there is 0.5 calls per hour on average from district 1 in the original model (level 1), for level 2 there will be on average 1 call per hour from district 1.
+
+At first we decided to use Bender's algorithm because the relaxation of the second stage (we call this MIP relaxation) had similar optimal values to the original IP.
+In general,it required a lot of iterations to converge, although looser bounds could be usually obtained in a few iterations.
+Bender's algorithm was not faster than the Gurobi solver, but this was likely largely caused by the overhead of Python API (and our other computation in Python).
+
+We chose to use branch-and-cut algorithm with Bender's cuts, where the cuts added within a lazy constraints callback, which should alleviate the Python overhead to some extend.
+This method proved to be better than the Bender's algorithm, but not faster than the MIP relaxation.
+
+We were not able to outperform the solver on the MIP relaxation by using  Bender's cuts.
+This is was partially caused by the overhead of our Pyhton code, but mostly the character of the constraints. We hypothesize if we considered relocation of the ambulance vehicles after a call, then bender's, might preform better due to the balancing nature of the additional constraints needed.
+
+The project could be extended by trying different algorithms such as the level method or regularization. Alternatively, a different formulation could work better with the algorithms that we used. Perhaps if we used a multi-stage approach with time periods of 1 hour we would've received different results. 
+
+The data imposed some restrictions on the model and therefore it would be interesting to compare the performance of our methods across different data-sets. Specifically a data set with more possible ambulance station locations and available ambulances.
+
+%-------------------------------------------------------------------------------
+% Results - Report the results of numerical experiments. This might include results either about computation times (and other computational statistics, such as iterations, cuts, branch-and-bound nodes, etc.) of different methods compared, or it might include results about solutions obtained from different models/algorithms (hopefully, to understand which method provides better solutions)
+%-------------------------------------------------------------------------------
+\newpage
+\section*{Results}
+\addcontentsline{toc}{section}{Results}
+
+First we generated 50 scenarios for level 1 (i.e. the original frequency of the calls).
+We see that the optimal value of the original IP and the relaxation of the second stage are close, while the solutions are more variable.
+
+\begin{table}[h]
+    \centering
+    \caption{50 Scenarios, Level 1 \label{tbl:50L1}}
+    \begin{tabular}{SSSSS} \toprule
+        {} & {IP} & {MIP relaxation} & {Bender's} & {Branch-and-cut} \\ \midrule
+        {Time (sec)}                   & 0.62   & 1 & 31.07 & 27.02 \\
+        {Objective}              & 633.5  & 634 & 634  & 634 \\
+        {QRV locations}  & 
+        {2, 3, 11} &
+        {2, 3, 9} & 
+        {3, 8, 16} & 
+        {2, 9, 12} \\
+        {BLS locations}  & 
+        {3, 4, 8, 10, 13} & 
+        {1, 3, 4, 8, 13} & 
+        {1, 2, 6, 7, 9} & 
+        {4, 7, 8, 10, 13} \\
+     \bottomrule
+    \end{tabular}
+\end{table}
+
+We repeated the same experiment for 200 scenarios.
+Again we see that the optimal values are similar.
+We can also observe that branch-and-cut algorithm with Bender's cuts provide solutions that are more similar to the original IP than the other methods.
+
+\begin{table}[h]
+    \centering
+    \caption{200 Scenarios, Level 1 \label{tbl:50L1}}
+    \begin{tabular}{SSSSS} \toprule
+        {} & {IP} & {MIP relaxation} & {Bender's} & {Branch-and-cut} \\ \midrule
+        {Time (sec)} & 15.1   & 19.21    & 223.84    & 263.61 \\
+        {Objective}  & 751.625  & 754.42 & 754.458   & 754.42 \\
+        {QRV locations}  & 
+        {6, 8, 16} &
+        {1, 3, 8} & 
+        {4, 7, 8} & 
+        {3, 8, 16} \\
+        {BLS locations}  & 
+        {1, 2, 3, 6, 11} & 
+        {1, 2, 9, 13, 14} & 
+        {1, 3, 6, 11, 15} & 
+        {1, 2, 9, 13, 14} \\
+     \bottomrule
+    \end{tabular}
+\end{table}
+
+We repeat both experiments for a double of the call frequency.
+This increases the numbers of overlaps, which is the main issue bottleneck of scalability of our model.
+
+%%% Level 2
+\begin{table}[h]
+    \centering
+    \caption{50 Scenarios, Level 2 \label{tbl:50L1}}
+    \begin{tabular}{SSSSS} \toprule
+        {} & {IP} & {MIP relaxation} & {Bender's} & {Branch-and-cut} \\ \midrule
+        {Time (sec)} & 2.56  & 16.33   & 254.04  & 113.19 \\
+        {Objective}  & 1434  & 1444.63 & 1444.63 & 1444.63 \\
+        {QRV locations}  & 
+        {3, 13, 15} &
+        {1, 2, 14} & 
+        {1, 2, 14} & 
+        {14, 15, 16} \\
+        {BLS locations}  & 
+        {1, 3, 8, 10, 13} & 
+        {3, 4, 6, 8, 16} & 
+        {3, 4, 6, 8, 16} & 
+        {3, 4, 6, 8, 16} \\
+     \bottomrule
+    \end{tabular}
+\end{table}
+
+%%% Level 2
+\begin{table}[h]
+    \centering
+    \caption{200 Scenarios, Level 2 \label{tbl:50L1}}
+    \begin{tabular}{SSSSS} \toprule
+        {} & {IP} & {MIP relaxation} & {Bender's} & {Branch-and-cut} \\ \midrule
+        {Time (sec)} & 150.53   & 39.86   & 1110.32   & 793.08 \\
+        {Objective}  & 1422.38  & 1438.29 & 1438.29   & 1438.29 \\
+        {QRV locations}  & 
+        {1, 3, 15} &
+        {3, 4, 8} & 
+        {3, 4, 8} & 
+        {3, 4, 8} \\
+        {BLS locations}  & 
+        {1, 6, 8, 13, 14} & 
+        {1, 6, 11, 14, 15} & 
+        {1, 6, 11, 14, 15} & 
+        {1, 6, 11, 14, 15} \\
+     \bottomrule
+    \end{tabular}
+\end{table}
+
+In general, the MIP relaxation seems to be the best option.
+However, for higher levels the MIP relaxation quickly becomes slow, e.g. for level 2 and 1000 scenarios Gurobi solver 2535.82 seconds to converge.
+
+In general, the original IP formulation was not too computationally difficult for a relatively small number of scenarios.
+However, for 1000 scenarios (level 1) the MIP relaxation was much faster than the IP (251.01 seconds vs. 913.40 seconds) and the optimal value was still quite similar (741.173 vs 738.8).
+
+%-------------------------------------------------------------------------------
+% REFERENCES 
+%-------------------------------------------------------------------------------
+\newpage
+\section*{References}
+\addcontentsline{toc}{section}{References}
+
+\printbibliography[heading=none]
+
+\end{document}
